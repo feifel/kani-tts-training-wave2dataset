@@ -1,0 +1,8 @@
+numpy
+pandas
+soundfile
+torchaudio
+faster-whisper
+whisperx
+silero-vad
+tqdm
