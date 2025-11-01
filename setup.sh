@@ -44,6 +44,10 @@ print_info "Installing requirements from requirements.txt..."
 print_info "This may take several minutes..."
 pip install -r requirements.txt
 
+# Add cuDNN library path to venv activation script to prevent the following error:
+# Unable to load any of {libcudnn_ops.so.9.1.0, libcudnn_ops.so.9.1, libcudnn_ops.so.9, libcudnn_ops.so}
+echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(python -c "import nvidia.cudnn; print(nvidia.cudnn.__path__[0])")/lib' >> venv/bin/activate
+
 if [ $? -eq 0 ]; then
     print_success "All Python packages installed successfully"
 else
