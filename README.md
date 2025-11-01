@@ -16,28 +16,48 @@ pip install -r requirements.txt
 
 # 2. drop long audio files into ./audio_in/
 # 3. run pipeline
-python slice_pipeline.py
+python chunk_and_transcribe.py \
+    -i /data/0-source-audio/Linda.wav \
+    -o /data/1-audio-chunks/Linda \
+    --silence_duration 0.5 \
+    --max_chunk_duration 5.0 \
+     --model large-v3 \
+     --device cuda \
+     --format csv \
+     --language de \
+     --speaker Linda
+
 
 # 4. create HF dataset for speaker "linda"
-python create_hf_dataset.py linda
+python create_base_dataset.py Linda
 ```
 
 ## Pipeline steps
 - slice_pipeline.py	full VAD → diarization → slicing → manifest
-- create_hf_dataset.py <speaker>	manifest → HF Dataset → hf_repo/dataset_<speaker>
+- create_base_dataset.py <speaker>
 
 ## Output layout
 ```plaintext
-out/
-├── linda_0001.wav
-├── …
-└── manifest.csv   # audio_path,text,duration
-
-hf_repo/
-└── dataset_linda/ # Arrow dataset, 48 kHz
+## Output layout
+```plaintext
+/data/
+├── 0-source-audio/
+│   └── Linda.wav
+├── 1-audio-chunks/
+│   └── Linda/
+│       ├── chunk_00001.wav
+│       ├── chunk_00002.wav
+│       ├── …
+│       └── manifest.csv   # audio_path,text,duration
+└── 2-base-datasets/
+    └── Linda/             # Arrow dataset, 48 kHz
+        ├── data-00000-of-00001.arrow
+        ├── dataset_info.json
+        └── state.json
 ```
+
 ## Customisation
-- Change target sample-rate in create_hf_dataset.py
+- Change target sample-rate in create_base_dataset.py
 - Adjust min-segment / padding seconds inside slice_pipeline.py
 - Swap Whisper model size via --model large-v2
 

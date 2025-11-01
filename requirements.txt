@@ -7,3 +7,4 @@ whisperx
 silero-vad
 tqdm
 nvidia-cudnn-cu12
+datasets
