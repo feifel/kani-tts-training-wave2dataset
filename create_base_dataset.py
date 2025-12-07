@@ -1,11 +1,17 @@
 from datasets import load_dataset, Audio
 import sys
 
-# Get speaker parameter from command line or use default
-speaker = sys.argv[1] if len(sys.argv) > 1 else "Linda"
+# Get speaker and sampling_rate parameters from command line (mandatory)
+if len(sys.argv) < 3:
+    print("Error: Speaker and sampling_rate parameters are required")
+    print("Usage: python create_base_dataset.py <speaker> <sampling_rate>")
+    sys.exit(1)
 
-ds = load_dataset("csv", data_files="/data/1-audio-chunks/Linda/manifest.csv")["train"]
-ds = ds.cast_column("audio", Audio(sampling_rate=48000))
+speaker = sys.argv[1]
+sampling_rate = int(sys.argv[2])
+
+ds = load_dataset("csv", data_files=f"/data/1-audio-chunks/{speaker}/manifest.csv")["train"]
+ds = ds.cast_column("audio", Audio(sampling_rate=sampling_rate))
 # Optional split
 # ds = ds.train_test_split(test_size=0.05, seed=42)
 # save as HuggingFace dataset (arrow) folder
